@@ -76,12 +76,12 @@ export class ModalComponent implements OnInit, OnDestroy {
 
   changeSize(size: Size): void {
     if (!this.isMobile) {
-      const body = document.getElementById('body');
+      const body = document.getElementById('modal-template');
 
-      const width = size.width ? size.width : '40px';
+      const width = size.width ? size.width : '100%';
       body.style.setProperty('--width-size', width);
 
-      const height = size.height ? size.height : '40px';
+      const height = size.height ? size.height : '';
       body.style.setProperty('--height-size', height);
     }
   }

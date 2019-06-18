@@ -10,9 +10,10 @@ $height-size: var(--height-size);
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
+    left: 50%;
     width: $width-size;
     height: $height-size;
+    transform: translate(-50%);
 
     /* z-index must be higher than .modal-background */
     z-index: 1000;
@@ -52,13 +53,19 @@ body.modal-open {
 @media screen and (max-width: 1024px) {
   :host {
     overflow-y: auto;
-    height: 100vh;
+    height: 98vh;
     .modal {
+      left: 0;
+      transform: translate(0);
       max-width: 96% !important;
       width: 96%;
       margin-right: 2%;
       margin-left: 2%;
       margin-top: 2%;
+    }
+
+    .custom-modal-body {
+      margin: 0 !important;
     }
   }
 }
