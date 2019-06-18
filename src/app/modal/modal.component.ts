@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
 import { ModalService } from '../service/modal.service';
+import { Size } from '../models/size.model';
+import { GeneralService } from '../service/general.service';
 
 @Component({
   selector: 'app-modal',
@@ -7,29 +9,41 @@ import { ModalService } from '../service/modal.service';
   styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent implements OnInit, OnDestroy {
-  @Input() name: string;
-  private element: any;
+  /**
+   * @description property size controls width margin and heigth margin to define modal size
+   * @type { width: string, height: string }
+   * @example { width: '30%', height: '200px' }
+   */
+  @Input() size: Size = null;
+  @Input() name: string = null;
+  private readonly element: any;
+  isMobile: boolean;
 
-  constructor(private modalService: ModalService, private el: ElementRef) {
+  constructor(
+    private modalService: ModalService,
+    private el: ElementRef,
+    private generalService: GeneralService
+  ) {
     this.element = el.nativeElement;
   }
 
   ngOnInit(): void {
     const modal = this;
+    this.isMobile = this.generalService.isMobile();
 
     if (!this.name) {
-      console.error('modal sem nome');
+      console.error('modal must have a name');
       return;
+    }
+
+    if (this.size) {
+      this.changeSize(this.size);
     }
 
     document.body.appendChild(this.element);
 
     // close modal on background click
-    this.element.addEventListener('click', (e: any) => {
-      if (e.target.className === 'modal') {
-        modal.close();
-      }
-    });
+    this.addEvent('click', 'modal', modal);
 
     // add self (this modal instance) to the modal service so it's accessible from controllers
     this.modalService.add(this);
@@ -48,5 +62,27 @@ export class ModalComponent implements OnInit, OnDestroy {
   close(): void {
     this.element.style.display = 'none';
     document.body.classList.remove('modal-open');
+  }
+
+  addEvent(event: string, styleClass: string, modal: any): void {
+    this.element
+      .addEventListener(event,
+      (e: any) => {
+        if (e.target.className === styleClass) {
+          modal.close();
+        }
+      });
+  }
+
+  changeSize(size: Size): void {
+    if (!this.isMobile) {
+      const body = document.getElementById('body');
+
+      const width = size.width ? size.width : '40px';
+      body.style.setProperty('--width-size', width);
+
+      const height = size.height ? size.height : '40px';
+      body.style.setProperty('--height-size', height);
+    }
   }
 }
